@@ -1,4 +1,4 @@
-# {{app_name}} Deployment Quick Start
+# dynamiccloudarchitect Deployment Quick Start
 
 ## TL;DR - Get Running in 10 Minutes
 
@@ -12,8 +12,8 @@ cp terraform.tfvars.example terraform.tfvars
 Edit `terraform.tfvars` - **minimum required**:
 ```hcl
 aws_region           = "us-east-1"
-frontend_bucket_name = "{{app_name}}-frontend-yourname"  # Must be unique!
-database_bucket_name = "{{app_name}}-database-yourname"  # Must be unique!
+frontend_bucket_name = "dynamiccloudarchitect-frontend-yourname"  # Must be unique!
+database_bucket_name = "dynamiccloudarchitect-database-yourname"  # Must be unique!
 ```
 
 ### 2. Deploy Infrastructure (5 min)
@@ -37,7 +37,7 @@ Retrieve automatically-created deployment credentials:
 ./scripts/get-deployment-credentials.sh
 ```
 
-Choose option 1 to create AWS CLI profile `{{app_name}}-deployment`.
+Choose option 1 to create AWS CLI profile `dynamiccloudarchitect-deployment`.
 
 ### 4. Configure Environment Variables (1 min)
 
@@ -46,11 +46,11 @@ Create a `.env` file in project root:
 ```bash
 cat > .env <<EOF
 export AWS_REGION=us-east-1
-export AWS_PROFILE={{app_name}}-deployment
+export AWS_PROFILE=dynamiccloudarchitect-deployment
 export FRONTEND_S3_BUCKET=$(cd terraform/environments/prod && terraform output -raw frontend_bucket_name)
 export CLOUDFRONT_DISTRIBUTION_ID=$(cd terraform/environments/prod && terraform output -raw cloudfront_distribution_id)
 export DATABASE_S3_BUCKET=$(cd terraform/environments/prod && terraform output -raw database_bucket_name)
-export ECR_REPOSITORY={{app_name}}-backend
+export ECR_REPOSITORY=dynamiccloudarchitect-backend
 EOF
 
 # Add to .gitignore
@@ -154,23 +154,23 @@ The `deploy.sh` script:
 ### View Logs
 ```bash
 # Task Manager Lambda logs (handles /start requests)
-aws logs tail /aws/lambda/{{app_name}}-task-manager-prod --follow
+aws logs tail /aws/lambda/dynamiccloudarchitect-task-manager-prod --follow
 
 # Task Monitor Lambda logs (triggered by alarm)
-aws logs tail /aws/lambda/{{app_name}}-task-monitor-prod --follow
+aws logs tail /aws/lambda/dynamiccloudarchitect-task-monitor-prod --follow
 
 # Backend ECS logs
-aws logs tail /ecs/{{app_name}}-prod --follow
+aws logs tail /ecs/dynamiccloudarchitect-prod --follow
 ```
 
 ### Monitor Alarm
 ```bash
 # Check if alarm is active
-aws cloudwatch describe-alarms --alarm-names {{app_name}}-task-inactivity-prod
+aws cloudwatch describe-alarms --alarm-names dynamiccloudarchitect-task-inactivity-prod
 
 # Manually trigger alarm (for testing)
 aws cloudwatch set-alarm-state \
-  --alarm-name {{app_name}}-task-inactivity-prod \
+  --alarm-name dynamiccloudarchitect-task-inactivity-prod \
   --state-value ALARM \
   --state-reason "Manual test"
 ```
@@ -184,19 +184,19 @@ curl https://<api-url>/start
 curl https://<api-url>/start?action=ping
 
 # Stop backend (it auto-stops after 5 min idle)
-aws ecs stop-task --cluster {{app_name}}-prod --task <task-arn>
+aws ecs stop-task --cluster dynamiccloudarchitect-prod --task <task-arn>
 ```
 
 ### Database Operations
 ```bash
 # Backup database
-aws s3 cp s3://{{app_name}}-database-prod/db.sqlite3 ./backup.sqlite3
+aws s3 cp s3://dynamiccloudarchitect-database-prod/db.sqlite3 ./backup.sqlite3
 
 # Restore database
-aws s3 cp ./backup.sqlite3 s3://{{app_name}}-database-prod/db.sqlite3
+aws s3 cp ./backup.sqlite3 s3://dynamiccloudarchitect-database-prod/db.sqlite3
 
 # List backups
-aws s3api list-object-versions --bucket {{app_name}}-database-prod --prefix db.sqlite3
+aws s3api list-object-versions --bucket dynamiccloudarchitect-database-prod --prefix db.sqlite3
 ```
 
 ## Cost Estimate
@@ -209,9 +209,9 @@ aws s3api list-object-versions --bucket {{app_name}}-database-prod --prefix db.s
 
 | Issue | Solution |
 |-------|----------|
-| Task won't start | Check Lambda logs: `aws logs tail /aws/lambda/{{app_name}}-task-manager-prod` |
+| Task won't start | Check Lambda logs: `aws logs tail /aws/lambda/dynamiccloudarchitect-task-manager-prod` |
 | Frontend not updating | Invalidate CloudFront: `aws cloudfront create-invalidation --distribution-id <id> --paths "/*"` |
-| Database not syncing | Check task logs: `aws logs tail /ecs/{{app_name}}-prod` |
+| Database not syncing | Check task logs: `aws logs tail /ecs/dynamiccloudarchitect-prod` |
 | Deploy script failing | Check environment variables: `echo $FRONTEND_S3_BUCKET`, verify AWS credentials: `aws sts get-caller-identity` |
 | Docker build fails | Ensure Docker is running: `docker ps` |
 
@@ -233,7 +233,7 @@ aws s3api list-object-versions --bucket {{app_name}}-database-prod --prefix db.s
 
 ```bash
 # Backup database first!
-aws s3 cp s3://{{app_name}}-database-prod/db.sqlite3 ./backup-$(date +%Y%m%d).sqlite3
+aws s3 cp s3://dynamiccloudarchitect-database-prod/db.sqlite3 ./backup-$(date +%Y%m%d).sqlite3
 
 # Destroy all infrastructure
 cd terraform/environments/prod

@@ -2,7 +2,7 @@
 
 ## Overview
 
-{{app_name}} uses an **autonomous on-demand backend system** for cost optimization in production. The backend automatically starts when needed and shuts down when idle, reducing AWS costs by up to 95% compared to always-on infrastructure.
+dynamiccloudarchitect uses an **autonomous on-demand backend system** for cost optimization in production. The backend automatically starts when needed and shuts down when idle, reducing AWS costs by up to 95% compared to always-on infrastructure.
 
 **Key Features:**
 - ✅ **Zero configuration** - Works automatically based on environment variables
@@ -123,7 +123,7 @@ The system is configured entirely through environment variables in `frontend/.en
 
 ```bash
 # API Gateway endpoint for starting backend
-REACT_APP_API_GATEWAY_START_ENDPOINT=https://api{{app_name}}.yerson.co/start
+REACT_APP_API_GATEWAY_START_ENDPOINT=https://apidynamiccloudarchitect.yerson.co/start
 
 # Default API URL (used as fallback)
 REACT_APP_API_URL=https://sandbox.yerson.co/api/v1
@@ -165,7 +165,7 @@ REACT_APP_API_GATEWAY_START_ENDPOINT=
 
 ```bash
 REACT_APP_API_URL=https://sandbox.yerson.co/api/v1
-REACT_APP_API_GATEWAY_START_ENDPOINT=https://api{{app_name}}.yerson.co/start
+REACT_APP_API_GATEWAY_START_ENDPOINT=https://apidynamiccloudarchitect.yerson.co/start
 REACT_APP_KEEP_ALIVE_INTERVAL=150000
 REACT_APP_STARTUP_TIMEOUT=90000
 ```
@@ -319,7 +319,7 @@ Located in `BackEndApi/src/api/utils/views.py`
 
 Check if backend is running:
 ```bash
-curl https://api{{app_name}}.yerson.co/start?action=ping
+curl https://apidynamiccloudarchitect.yerson.co/start?action=ping
 ```
 
 **Response (running):**
@@ -368,12 +368,12 @@ Backend URL updated to: http://54.XXX.XXX.XXX:8000/api/v1
 
 2. **Test endpoint manually**
    ```bash
-   curl https://api{{app_name}}.yerson.co/start
+   curl https://apidynamiccloudarchitect.yerson.co/start
    ```
 
 3. **Check Lambda logs**
    ```bash
-   aws logs tail /aws/lambda/{{app_name}}-task-manager-prod --follow
+   aws logs tail /aws/lambda/dynamiccloudarchitect-task-manager-prod --follow
    ```
 
 ### Backend keeps stopping
@@ -391,7 +391,7 @@ Backend URL updated to: http://54.XXX.XXX.XXX:8000/api/v1
 3. **Check CloudWatch metrics**
    ```bash
    aws cloudwatch get-metric-statistics \
-     --namespace {{app_name}}/ECS \
+     --namespace dynamiccloudarchitect/ECS \
      --metric-name TaskPing \
      --start-time $(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%S) \
      --end-time $(date -u +%Y-%m-%dT%H:%M:%S) \
@@ -423,7 +423,7 @@ Backend URL updated to: http://54.XXX.XXX.XXX:8000/api/v1
 
 2. **Check ECS task logs**
    ```bash
-   aws logs tail /ecs/{{app_name}}-prod --follow
+   aws logs tail /ecs/dynamiccloudarchitect-prod --follow
    ```
 
 3. **Optimize Docker image**
@@ -438,7 +438,7 @@ Backend URL updated to: http://54.XXX.XXX.XXX:8000/api/v1
 ```bash
 # Stop backend
 aws ecs stop-task \
-  --cluster {{app_name}}-prod \
+  --cluster dynamiccloudarchitect-prod \
   --task <task-arn>
 
 # Open app and trigger API call

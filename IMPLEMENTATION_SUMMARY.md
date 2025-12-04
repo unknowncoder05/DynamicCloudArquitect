@@ -74,7 +74,7 @@ Implemented a **fully autonomous on-demand backend lifecycle management system**
 **Configuration:**
 ```bash
 # Required for on-demand mode
-REACT_APP_API_GATEWAY_START_ENDPOINT=https://api{{app_name}}.yerson.co/start
+REACT_APP_API_GATEWAY_START_ENDPOINT=https://apidynamiccloudarchitect.yerson.co/start
 
 # Optional overrides
 REACT_APP_API_URL=https://sandbox.yerson.co/api/v1
@@ -252,7 +252,7 @@ Every URL, timeout, and interval comes from environment variables:
 
 2. **Test start endpoint:**
    ```bash
-   curl https://api{{app_name}}.yerson.co/start
+   curl https://apidynamiccloudarchitect.yerson.co/start
    ```
 
 3. **Test frontend:**
@@ -310,7 +310,7 @@ Every URL, timeout, and interval comes from environment variables:
 ```bash
 cd frontend
 vim .env
-# Add: REACT_APP_API_GATEWAY_START_ENDPOINT=https://api{{app_name}}.yerson.co/start
+# Add: REACT_APP_API_GATEWAY_START_ENDPOINT=https://apidynamiccloudarchitect.yerson.co/start
 ```
 
 ### Step 2: Deploy
@@ -331,7 +331,7 @@ cd ..
 
 ```bash
 # Test start endpoint
-curl https://api{{app_name}}.yerson.co/start
+curl https://apidynamiccloudarchitect.yerson.co/start
 
 # Open app and check console
 ```
@@ -360,13 +360,13 @@ Backend keep-alive ping successful: alive
 
 ```bash
 # Lambda logs
-aws logs tail /aws/lambda/{{app_name}}-task-manager-prod --follow
+aws logs tail /aws/lambda/dynamiccloudarchitect-task-manager-prod --follow
 
 # Backend logs
-aws logs tail /ecs/{{app_name}}-prod --follow
+aws logs tail /ecs/dynamiccloudarchitect-prod --follow
 
 # API Gateway logs
-aws logs tail /aws/apigateway/{{app_name}}-prod --follow
+aws logs tail /aws/apigateway/dynamiccloudarchitect-prod --follow
 ```
 
 ## Troubleshooting
@@ -375,10 +375,10 @@ aws logs tail /aws/apigateway/{{app_name}}-prod --follow
 
 ```bash
 # Test endpoint
-curl https://api{{app_name}}.yerson.co/start
+curl https://apidynamiccloudarchitect.yerson.co/start
 
 # Check Lambda
-aws logs tail /aws/lambda/{{app_name}}-task-manager-prod --follow
+aws logs tail /aws/lambda/dynamiccloudarchitect-task-manager-prod --follow
 ```
 
 ### Keep-Alive Not Working

@@ -2,7 +2,7 @@
 
 ## Quick Setup (5 Minutes)
 
-This guide shows how to enable {{app_name}}'s autonomous on-demand backend. **No code changes required** - just environment variables.
+This guide shows how to enable dynamiccloudarchitect's autonomous on-demand backend. **No code changes required** - just environment variables.
 
 ## Prerequisites
 
@@ -21,14 +21,14 @@ terraform output api_start_endpoint
 
 You'll get either:
 - **Direct URL:** `https://xxxxx.execute-api.us-east-1.amazonaws.com/prod/start`
-- **Custom domain:** `https://api{{app_name}}.yerson.co/start`
+- **Custom domain:** `https://apidynamiccloudarchitect.yerson.co/start`
 
 ## Step 2: Configure Frontend
 
-Edit `/home/ubuntu/Personal/{{app_name}}/frontend/.env`:
+Edit `/home/ubuntu/Personal/dynamiccloudarchitect/frontend/.env`:
 
 ```bash
-REACT_APP_API_GATEWAY_START_ENDPOINT=https://api{{app_name}}.yerson.co/start
+REACT_APP_API_GATEWAY_START_ENDPOINT=https://apidynamiccloudarchitect.yerson.co/start
 ```
 
 That's it! The system handles everything else automatically.
@@ -47,7 +47,7 @@ cd ..
 ### Test Start Endpoint
 
 ```bash
-curl https://api{{app_name}}.yerson.co/start
+curl https://apidynamiccloudarchitect.yerson.co/start
 ```
 
 Expected response:
@@ -89,7 +89,7 @@ Keep-alive initialized (interval: 150000ms)
 
 ## Configuration Reference
 
-All environment variables in `/home/ubuntu/Personal/{{app_name}}/frontend/.env`:
+All environment variables in `/home/ubuntu/Personal/dynamiccloudarchitect/frontend/.env`:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -113,7 +113,7 @@ Backend runs constantly via Docker Compose.
 
 ```bash
 REACT_APP_API_URL=https://sandbox.yerson.co/api/v1
-REACT_APP_API_GATEWAY_START_ENDPOINT=https://api{{app_name}}.yerson.co/start
+REACT_APP_API_GATEWAY_START_ENDPOINT=https://apidynamiccloudarchitect.yerson.co/start
 ```
 
 Backend starts on-demand. **85% cost savings.**
@@ -124,10 +124,10 @@ Backend starts on-demand. **85% cost savings.**
 
 ```bash
 # Test endpoint
-curl https://api{{app_name}}.yerson.co/start
+curl https://apidynamiccloudarchitect.yerson.co/start
 
 # Check Lambda logs
-aws logs tail /aws/lambda/{{app_name}}-task-manager-prod --follow
+aws logs tail /aws/lambda/dynamiccloudarchitect-task-manager-prod --follow
 ```
 
 ### Keep-Alive Not Working

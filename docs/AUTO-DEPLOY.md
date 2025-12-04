@@ -2,7 +2,7 @@
 
 ## Overview
 
-{{app_name}} supports **fully automatic deployment** - just push your code and it deploys automatically! No manual steps needed.
+dynamiccloudarchitect supports **fully automatic deployment** - just push your code and it deploys automatically! No manual steps needed.
 
 ## Quick Start
 
@@ -11,7 +11,7 @@
 ```bash
 # 1. Clone the repository
 git clone <repo-url>
-cd {{app_name}}
+cd dynamiccloudarchitect
 
 # 2. Deploy infrastructure (one-time)
 make infra-apply

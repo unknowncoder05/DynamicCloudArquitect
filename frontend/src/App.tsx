@@ -6,14 +6,12 @@ import { store } from './store';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { getCurrentUser } from './store/authSlice';
 import AuthPage from './pages/AuthPage';
-import Dashboard from './components/Dashboard';
 import VerifyAccount from './components/VerifyAccount';
 import VerifyLogin from './components/VerifyLogin';
 import ServerDown from './pages/ServerDown';
 import ServerStartPage from './pages/ServerStartPage';
-import DiagramPage from './pages/DiagramPage';
-import ProjectsPage from './pages/ProjectsPage';
-import SpatialViewPage from './pages/SpatialViewPage';
+import ProjectsPage from './pages/terraform/ProjectsPage';
+import ProjectDetailPage from './pages/terraform/ProjectDetailPage';
 import backendManager from './services/BackendManager';
 import env from './config/environment';
 
@@ -132,42 +130,40 @@ const AuthWrapper: React.FC = () => {
             isAuthenticated ? <Navigate to="/dashboard" replace /> : <VerifyLogin key="verify-login" />
           }
         />
+
+        {/* Terraform Routes */}
         <Route
-          path="/dashboard"
+          path="/terraform/projects"
           element={
-            isAuthenticated ? <Dashboard key="dashboard" /> : <Navigate to="/login" replace />
+            isAuthenticated ? <ProjectsPage /> : <Navigate to="/login" replace />
           }
         />
         <Route
-          path="/projects"
+          path="/terraform/projects/:projectId"
           element={
-            isAuthenticated ? <ProjectsPage key="projects" /> : <Navigate to="/login" replace />
+            isAuthenticated ? <ProjectDetailPage /> : <Navigate to="/login" replace />
           }
         />
-        <Route
-          path="/diagram"
-          element={
-            isAuthenticated ? <DiagramPage key="diagram" /> : <Navigate to="/login" replace />
-          }
-        />
-        <Route
-          path="/spatial"
-          element={
-            isAuthenticated ? <SpatialViewPage key="spatial" /> : <Navigate to="/login" replace />
-          }
-        />
-        <Route
-          path="/server-down"
-          element={<ServerDown key="server-down" />}
-        />
-        <Route
-          path="/start-server"
-          element={<ServerStartPage key="start-server" />}
-        />
+
+        {/* Default route */}
         <Route
           path="/"
           element={
-            <Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />
+            isAuthenticated ? (
+              <Navigate to="/terraform/projects" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/terraform/projects" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
           }
         />
       </Routes>

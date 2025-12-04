@@ -1,6 +1,6 @@
-# {{app_name}} Frontend
+# dynamiccloudarchitect Frontend
 
-A React frontend for {{app_name}} - a web-based application for building, visualizing, and managing complex narratives.
+A React frontend for dynamiccloudarchitect - a web-based application for building, visualizing, and managing complex narratives.
 
 ## Features
 
@@ -110,4 +110,4 @@ These values are defined in `src/utils/constants.ts` and used throughout the app
 
 ## License
 
-This project is part of the {{app_name}} application.
+This project is part of the dynamiccloudarchitect application.

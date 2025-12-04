@@ -14,7 +14,7 @@ RUN apk update \
   # Pillow dependencies
   && apk add jpeg-dev zlib-dev freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev \
   # AWS CLI dependencies
-  && apk add aws-cli bash curl
+  && apk add aws-cli bash curl git
 
 # Requirements are installed here to ensure they will be cached.
 RUN apk add python3-dev

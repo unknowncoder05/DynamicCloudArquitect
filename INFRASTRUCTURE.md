@@ -1,4 +1,4 @@
-# {{app_name}} Infrastructure & Deployment Guide
+# dynamiccloudarchitect Infrastructure & Deployment Guide
 
 ## Quick Start
 
@@ -200,7 +200,7 @@ The deployment user will be created when you run `terraform apply`. Credentials 
 
 This script will:
 1. Fetch credentials from SSM Parameter Store
-2. Configure AWS CLI profile (`{{app_name}}-deployment`)
+2. Configure AWS CLI profile (`dynamiccloudarchitect-deployment`)
 3. Or export as environment variables
 4. Or add to `.env` file
 
@@ -215,7 +215,7 @@ If using a custom domain, create SSL certificates:
 
 2. **API Certificate** (for API Gateway):
    - Can be in any region
-   - Domain: `{{app_name}}.yerson.co` (or your subdomain)
+   - Domain: `dynamiccloudarchitect.yerson.co` (or your subdomain)
    - Validation: DNS (Route53)
 
 ```bash
@@ -227,7 +227,7 @@ aws acm request-certificate \
 
 # Create API cert (your region)
 aws acm request-certificate \
-  --domain-name {{app_name}}.yerson.co \
+  --domain-name dynamiccloudarchitect.yerson.co \
   --validation-method DNS \
   --region us-east-1
 ```
@@ -249,8 +249,8 @@ aws_region  = "us-east-1"
 environment = "prod"
 
 # S3 Buckets (must be globally unique!)
-frontend_bucket_name = "{{app_name}}-frontend-prod-yourname"
-database_bucket_name = "{{app_name}}-database-prod-yourname"
+frontend_bucket_name = "dynamiccloudarchitect-frontend-prod-yourname"
+database_bucket_name = "dynamiccloudarchitect-database-prod-yourname"
 
 # ECS Configuration
 ecs_task_cpu          = "512"   # 0.5 vCPU
@@ -260,9 +260,9 @@ task_lifetime_seconds = 300     # 5 minutes
 # Domain Configuration (Optional)
 hosted_zone_name        = "yerson.co"
 frontend_subdomain      = "app.yerson.co"
-api_subdomain           = "{{app_name}}.yerson.co"
+api_subdomain           = "dynamiccloudarchitect.yerson.co"
 frontend_domain_aliases = ["app.yerson.co"]
-api_domain_name         = "{{app_name}}.yerson.co"
+api_domain_name         = "dynamiccloudarchitect.yerson.co"
 
 # SSL Certificates (from Step 2)
 frontend_certificate_arn = "arn:aws:acm:us-east-1:ACCOUNT:certificate/CERT_ID"
@@ -301,7 +301,7 @@ This script will:
 3. Or export as environment variables
 4. Or add to `.env` file
 
-**Recommended:** Choose option 1 to create an AWS CLI profile named `{{app_name}}-deployment`.
+**Recommended:** Choose option 1 to create an AWS CLI profile named `dynamiccloudarchitect-deployment`.
 
 ### Step 6: Configure Environment Variables
 
@@ -311,7 +311,7 @@ Create a `.env` file in the project root with Terraform outputs:
 cat > .env <<EOF
 # AWS Configuration
 export AWS_REGION=us-east-1
-export AWS_PROFILE={{app_name}}-deployment  # Use deployment user profile
+export AWS_PROFILE=dynamiccloudarchitect-deployment  # Use deployment user profile
 
 # S3 & CloudFront (from Terraform outputs)
 export FRONTEND_S3_BUCKET=$(cd terraform/environments/prod && terraform output -raw frontend_bucket_name)
@@ -319,7 +319,7 @@ export CLOUDFRONT_DISTRIBUTION_ID=$(cd terraform/environments/prod && terraform 
 export DATABASE_S3_BUCKET=$(cd terraform/environments/prod && terraform output -raw database_bucket_name)
 
 # ECR
-export ECR_REPOSITORY={{app_name}}-backend
+export ECR_REPOSITORY=dynamiccloudarchitect-backend
 EOF
 
 # Add .env to .gitignore (already done if following guide)
@@ -378,7 +378,7 @@ Or deploy specific components:
 
 ```bash
 # Start backend task
-curl https://{{app_name}}.yerson.co/start
+curl https://dynamiccloudarchitect.yerson.co/start
 
 # Response:
 {
@@ -399,7 +399,7 @@ curl http://<public-ip>:8000/api/story/projects/
 #### Test auto-extend
 
 ```bash
-curl https://{{app_name}}.yerson.co/start?action=ping
+curl https://dynamiccloudarchitect.yerson.co/start?action=ping
 ```
 
 #### Test frontend
@@ -515,23 +515,23 @@ docker-compose -f local.yml up
 
 ```bash
 # Task Manager logs
-aws logs tail /aws/lambda/{{app_name}}-task-manager-prod --follow
+aws logs tail /aws/lambda/dynamiccloudarchitect-task-manager-prod --follow
 
 # Task Monitor logs
-aws logs tail /aws/lambda/{{app_name}}-task-monitor-prod --follow
+aws logs tail /aws/lambda/dynamiccloudarchitect-task-monitor-prod --follow
 ```
 
 ### View ECS Task Logs
 
 ```bash
-aws logs tail /ecs/{{app_name}}-prod --follow
+aws logs tail /ecs/dynamiccloudarchitect-prod --follow
 ```
 
 ### Check Task State
 
 ```bash
 aws dynamodb get-item \
-  --table-name {{app_name}}-task-state-prod \
+  --table-name dynamiccloudarchitect-task-state-prod \
   --key '{"task_id": {"S": "main"}}' \
   --output json | jq
 ```
@@ -541,16 +541,16 @@ aws dynamodb get-item \
 ```bash
 # Check current alarm state
 aws cloudwatch describe-alarms \
-  --alarm-names {{app_name}}-task-inactivity-prod
+  --alarm-names dynamiccloudarchitect-task-inactivity-prod
 
 # View alarm history
 aws cloudwatch describe-alarm-history \
-  --alarm-name {{app_name}}-task-inactivity-prod \
+  --alarm-name dynamiccloudarchitect-task-inactivity-prod \
   --max-records 10
 
 # View TaskPing metrics
 aws cloudwatch get-metric-statistics \
-  --namespace {{app_name}}/ECS \
+  --namespace dynamiccloudarchitect/ECS \
   --metric-name TaskPing \
   --dimensions Name=Environment,Value=prod \
   --start-time $(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%S) \
@@ -560,7 +560,7 @@ aws cloudwatch get-metric-statistics \
 
 # Manually trigger alarm (for testing)
 aws cloudwatch set-alarm-state \
-  --alarm-name {{app_name}}-task-inactivity-prod \
+  --alarm-name dynamiccloudarchitect-task-inactivity-prod \
   --state-value ALARM \
   --state-reason "Manual test"
 ```
@@ -568,14 +568,14 @@ aws cloudwatch set-alarm-state \
 ### List Running Tasks
 
 ```bash
-aws ecs list-tasks --cluster {{app_name}}-prod
+aws ecs list-tasks --cluster dynamiccloudarchitect-prod
 ```
 
 ### Describe Task
 
 ```bash
 aws ecs describe-tasks \
-  --cluster {{app_name}}-prod \
+  --cluster dynamiccloudarchitect-prod \
   --tasks <task-arn>
 ```
 
@@ -609,18 +609,18 @@ aws ecs describe-tasks \
 ### Task Won't Start
 
 1. Check Lambda logs for errors
-2. Verify ECR has images: `aws ecr describe-images --repository-name {{app_name}}-backend`
-3. Check task definition: `aws ecs describe-task-definition --task-definition {{app_name}}-backend-prod`
+2. Verify ECR has images: `aws ecr describe-images --repository-name dynamiccloudarchitect-backend`
+3. Check task definition: `aws ecs describe-task-definition --task-definition dynamiccloudarchitect-backend-prod`
 
 ### Database Not Syncing
 
-1. Check S3 bucket exists: `aws s3 ls s3://{{app_name}}-database-prod/`
+1. Check S3 bucket exists: `aws s3 ls s3://dynamiccloudarchitect-database-prod/`
 2. Verify task IAM role has S3 permissions
 3. View task logs for sync errors
 
 ### Frontend Not Updating
 
-1. Check S3 sync: `aws s3 ls s3://{{app_name}}-frontend-prod/`
+1. Check S3 sync: `aws s3 ls s3://dynamiccloudarchitect-frontend-prod/`
 2. Verify CloudFront invalidation: `aws cloudfront list-invalidations --distribution-id <id>`
 3. Clear browser cache
 
@@ -644,7 +644,7 @@ terraform destroy
 **Warning**: This deletes everything including your database! Make sure to backup first:
 
 ```bash
-aws s3 cp s3://{{app_name}}-database-prod/db.sqlite3 ./backup-db.sqlite3
+aws s3 cp s3://dynamiccloudarchitect-database-prod/db.sqlite3 ./backup-db.sqlite3
 ```
 
 ## Next Steps

@@ -51,12 +51,12 @@ This document explains the complete implementation of the CloudWatch-based autom
 4. Gracefully handles metric push failures
 
 **CloudWatch Metric Details:**
-- Namespace: `{{app_name}}/Backend`
+- Namespace: `dynamiccloudarchitect/Backend`
 - Metric Name: `BackendActivity`
 - Value: 1.0 (Count)
 - Dimensions:
   - `Environment`: prod/dev
-  - `Project`: {{app_name}}
+  - `Project`: dynamiccloudarchitect
 
 **Response Format:**
 ```json
@@ -74,8 +74,8 @@ This document explains the complete implementation of the CloudWatch-based autom
 #### **CloudWatch Alarm** (`terraform/modules/cloudwatch/main.tf`)
 
 **Alarm Configuration:**
-- **Name**: `{{app_name}}-backend-inactivity-prod`
-- **Metric**: `BackendActivity` in `{{app_name}}/Backend` namespace
+- **Name**: `dynamiccloudarchitect-backend-inactivity-prod`
+- **Metric**: `BackendActivity` in `dynamiccloudarchitect/Backend` namespace
 - **Comparison**: Sum < 1 over 10 minutes
 - **Evaluation**: 1 period of 600 seconds (10 minutes)
 - **Missing Data**: Treated as breaching (no metric = inactive)
@@ -85,7 +85,7 @@ This document explains the complete implementation of the CloudWatch-based autom
 - Publishes to SNS topic
 
 #### **SNS Topic**
-- **Name**: `{{app_name}}-backend-inactivity-prod`
+- **Name**: `dynamiccloudarchitect-backend-inactivity-prod`
 - **Subscriber**: Task Shutdown Lambda function
 
 ### 4. Lambda Functions
@@ -123,7 +123,7 @@ This document explains the complete implementation of the CloudWatch-based autom
 **Added IAM Policy:** `cloudwatch_metrics`
 - **Action**: `cloudwatch:PutMetricData`
 - **Resource**: `*`
-- **Condition**: Namespace = `{{app_name}}/Backend`
+- **Condition**: Namespace = `dynamiccloudarchitect/Backend`
 
 This allows ECS tasks to push custom CloudWatch metrics from Django.
 
@@ -137,14 +137,14 @@ Task Shutdown Lambda has permissions for:
 #### **Environment Variables** (`terraform/environments/prod/main.tf`)
 
 **ECS Container:**
-- `CLOUDWATCH_NAMESPACE`: "{{app_name}}/Backend"
+- `CLOUDWATCH_NAMESPACE`: "dynamiccloudarchitect/Backend"
 - `PING_FREQUENCY_SECONDS`: "300" (5 minutes)
-- `PROJECT_NAME`: "{{app_name}}"
+- `PROJECT_NAME`: "dynamiccloudarchitect"
 - `ENVIRONMENT`: "prod"
 - `AWS_REGION`: (from config)
 
 **Terraform Variables:**
-- `cloudwatch_namespace` (default: "{{app_name}}/Backend")
+- `cloudwatch_namespace` (default: "dynamiccloudarchitect/Backend")
 - `inactivity_timeout_minutes` (default: 10)
 - `ping_frequency_seconds` (default: 300)
 
@@ -288,21 +288,21 @@ Keep ping frequency < inactivity timeout to ensure reliable tracking:
 ### CloudWatch Logs
 
 **Backend Activity:**
-- Log Group: `/ecs/{{app_name}}-prod`
+- Log Group: `/ecs/dynamiccloudarchitect-prod`
 - Check for: "CloudWatch metric pushed successfully"
 
 **Task Shutdown:**
-- Log Group: `/aws/lambda/{{app_name}}-task-shutdown-prod`
+- Log Group: `/aws/lambda/dynamiccloudarchitect-task-shutdown-prod`
 - Shows: Which tasks were stopped and why
 
 **Task Manager (Startup):**
-- Log Group: `/aws/lambda/{{app_name}}-task-manager-prod`
+- Log Group: `/aws/lambda/dynamiccloudarchitect-task-manager-prod`
 - Shows: Task startup process
 
 ### CloudWatch Metrics
 
-**Custom Metric:** `{{app_name}}/Backend > BackendActivity`
-- Dimensions: Environment=prod, Project={{app_name}}
+**Custom Metric:** `dynamiccloudarchitect/Backend > BackendActivity`
+- Dimensions: Environment=prod, Project=dynamiccloudarchitect
 - Should show spikes every 5 minutes when users are active
 
 **ECS Metrics:**
@@ -311,7 +311,7 @@ Keep ping frequency < inactivity timeout to ensure reliable tracking:
 
 ### CloudWatch Alarms
 
-**Alarm:** `{{app_name}}-backend-inactivity-prod`
+**Alarm:** `dynamiccloudarchitect-backend-inactivity-prod`
 - State: OK = backend active, ALARM = backend inactive
 - History: Shows when alarm triggered and SNS notifications sent
 

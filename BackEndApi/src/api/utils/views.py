@@ -57,8 +57,8 @@ def keep_alive(request):
     """
     try:
         # Get configuration from environment
-        cloudwatch_namespace = os.environ.get('CLOUDWATCH_NAMESPACE', '{{app_name}}/Backend')
-        project_name = os.environ.get('PROJECT_NAME', '{{app_name}}')
+        cloudwatch_namespace = os.environ.get('CLOUDWATCH_NAMESPACE', 'dynamiccloudarchitect/Backend')
+        project_name = os.environ.get('PROJECT_NAME', 'dynamiccloudarchitect')
         environment = os.environ.get('ENVIRONMENT', 'prod')
         ping_frequency = int(os.environ.get('PING_FREQUENCY_SECONDS', '300'))
 

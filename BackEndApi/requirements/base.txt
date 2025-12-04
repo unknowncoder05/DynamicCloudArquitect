@@ -62,3 +62,11 @@ django-sendgrid-v5==1.2.2
 openai
 pydantic==2.4.2
 httpx<0.28
+
+# Terraform & Infrastructure
+python-hcl2==4.3.2
+GitPython==3.1.40
+cryptography==41.0.7
+
+# Cloud Provider SDKs (for Phase 3 - Real-time monitoring)
+# boto3 already included above for AWS

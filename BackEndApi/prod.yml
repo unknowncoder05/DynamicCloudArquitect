@@ -5,7 +5,7 @@ services:
     build:
       context: ./
       dockerfile: ./compose/production/django/Dockerfile
-    image: api-story-architect-prod
+    image: api-cloud-architect-prod
     volumes:
       - ./api:/app
     env_file:

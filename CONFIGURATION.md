@@ -1,6 +1,6 @@
 # Configuration Guide - Avoiding Hardcoded Values
 
-This document describes all configurable values in the {{app_name}} application and where to set them.
+This document describes all configurable values in the dynamiccloudarchitect application and where to set them.
 
 ## Frontend Configuration
 
@@ -44,9 +44,9 @@ Set these in your ECS task definition or `.env` file:
 AWS_REGION=us-east-1                    # AWS region for CloudWatch
 
 # CloudWatch Monitoring
-CLOUDWATCH_NAMESPACE={{app_name}}/Backend  # CloudWatch namespace
+CLOUDWATCH_NAMESPACE=dynamiccloudarchitect/Backend  # CloudWatch namespace
 PING_FREQUENCY_SECONDS=300              # How often frontend should ping
-PROJECT_NAME={{app_name}}             # Project name
+PROJECT_NAME=dynamiccloudarchitect             # Project name
 ENVIRONMENT=prod                        # Environment name
 
 # Application Settings
@@ -96,7 +96,7 @@ ENVIRONMENT            # Environment name
 ```hcl
 # CloudWatch Configuration
 variable "cloudwatch_namespace" {
-  default = "{{app_name}}/Backend"
+  default = "dynamiccloudarchitect/Backend"
 }
 
 variable "inactivity_timeout_minutes" {
@@ -146,8 +146,8 @@ Create a `terraform.tfvars` file for environment-specific values:
 ```hcl
 # terraform/environments/prod/terraform.tfvars
 hosted_zone_name = "yerson.co"
-frontend_subdomain = "{{app_name}}"
-api_subdomain = "api{{app_name}}"
+frontend_subdomain = "dynamiccloudarchitect"
+api_subdomain = "apidynamiccloudarchitect"
 inactivity_timeout_minutes = 15  # Override default
 ping_frequency_seconds = 240      # Override default
 ```
@@ -222,8 +222,8 @@ python manage.py runserver
 
 **Frontend:**
 ```bash
-REACT_APP_API_GATEWAY_START_ENDPOINT=https://api{{app_name}}.yerson.co/start
-REACT_APP_API_URL=https://api{{app_name}}.yerson.co/api/v1
+REACT_APP_API_GATEWAY_START_ENDPOINT=https://apidynamiccloudarchitect.yerson.co/start
+REACT_APP_API_URL=https://apidynamiccloudarchitect.yerson.co/api/v1
 REACT_APP_KEEP_ALIVE_INTERVAL=300000  # 5 minutes
 ```
 

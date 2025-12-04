@@ -12,7 +12,7 @@ services:
     build:
       context: ./
       dockerfile: ./compose/local/django/Dockerfile
-    image: api-story-architect
+    image: api-cloud-architect
     depends_on:
       - postgres
     volumes:

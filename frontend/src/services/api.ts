@@ -1,4 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import backendManager from './BackendManager';
+import env from '../config/environment';
 import {
   LoginRequest,
   SignUpRequest,
@@ -7,9 +9,36 @@ import {
   User,
   AuthTokens
 } from '../types/auth';
-import { Character, Event, Group, Object as StoryObject, Relationship, RelationshipHistory, RelationshipArcData, Project, Alias, Location, LocationTag, LocationHistory, EntityLocation, PaginatedResponse, TextToDiagramResponse, PlotThread, Chapter, Paragraph } from '../types/diagram';
-import backendManager from './BackendManager';
-import env from '../config/environment';
+
+// Story-related types commented out - not needed for Terraform app
+// import { Character, Event, Group, Object as StoryObject, Relationship, RelationshipHistory, RelationshipArcData, Project, Alias, Location, LocationTag, LocationHistory, EntityLocation, PaginatedResponse, TextToDiagramResponse, PlotThread, Chapter, Paragraph } from '../types/diagram';
+
+// Temporary types for story-related endpoints (kept for backwards compatibility)
+interface PaginatedResponse<T> {
+  count: number;
+  next?: string;
+  previous?: string;
+  results: T[];
+}
+
+// Placeholder types for story system (not used in Terraform app)
+type Character = any;
+type Event = any;
+type Group = any;
+type StoryObject = any;
+type Relationship = any;
+type RelationshipHistory = any;
+type RelationshipArcData = any;
+type Project = any;
+type Alias = any;
+type Location = any;
+type LocationTag = any;
+type LocationHistory = any;
+type EntityLocation = any;
+type TextToDiagramResponse = any;
+type PlotThread = any;
+type Chapter = any;
+type Paragraph = any;
 
 class ApiService {
   private api: AxiosInstance;
@@ -112,6 +141,27 @@ class ApiService {
         return Promise.reject(error);
       }
     );
+  }
+
+  // Generic HTTP methods for external use (e.g., terraformApi)
+  get<T = any>(url: string, config?: any): Promise<AxiosResponse<T>> {
+    return this.api.get<T>(url, config);
+  }
+
+  post<T = any>(url: string, data?: any, config?: any): Promise<AxiosResponse<T>> {
+    return this.api.post<T>(url, data, config);
+  }
+
+  patch<T = any>(url: string, data?: any, config?: any): Promise<AxiosResponse<T>> {
+    return this.api.patch<T>(url, data, config);
+  }
+
+  delete<T = any>(url: string, config?: any): Promise<AxiosResponse<T>> {
+    return this.api.delete<T>(url, config);
+  }
+
+  put<T = any>(url: string, data?: any, config?: any): Promise<AxiosResponse<T>> {
+    return this.api.put<T>(url, data, config);
   }
 
   // Authentication endpoints

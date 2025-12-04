@@ -9,6 +9,7 @@ RUN pip3 install --no-cache --upgrade pip setuptools
 
 RUN apk --no-cache add bash mc \
             util-linux \
+            git \
             ttf-droid \
             ttf-dejavu \
             ttf-freefont \

@@ -2,7 +2,7 @@
 
 ## Overview
 
-{{app_name}} uses two separate sets of AWS credentials for security:
+dynamiccloudarchitect uses two separate sets of AWS credentials for security:
 
 1. **Admin Credentials** - For deploying/updating infrastructure with Terraform
 2. **Deployment Credentials** - For day-to-day deployments (frontend/backend)
@@ -43,7 +43,7 @@
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  4. Daily Deployments (using deployment credentials)         │
-│     └─> export AWS_PROFILE={{app_name}}-deployment        │
+│     └─> export AWS_PROFILE=dynamiccloudarchitect-deployment        │
 │         └─> make deploy-frontend                             │
 │         └─> make deploy-backend                              │
 └─────────────────────────────────────────────────────────────┘
@@ -69,7 +69,7 @@
 
 ### 2. Deployment Credentials (Auto-created)
 
-**IAM User:** `{{app_name}}-deployment-prod`
+**IAM User:** `dynamiccloudarchitect-deployment-prod`
 
 **Purpose:** Application deployment only
 
@@ -100,10 +100,10 @@
 ./scripts/get-deployment-credentials.sh
 
 # Choose option 1 when prompted
-# This creates profile: {{app_name}}-deployment
+# This creates profile: dynamiccloudarchitect-deployment
 
 # Add to .env file
-echo "export AWS_PROFILE={{app_name}}-deployment" >> .env
+echo "export AWS_PROFILE=dynamiccloudarchitect-deployment" >> .env
 
 # Use for all deployments
 source .env
@@ -130,13 +130,13 @@ export AWS_REGION='us-east-1'
 ```bash
 # Using admin credentials
 aws ssm get-parameter \
-  --name "/{{app_name}}/prod/deployment/access-key-id" \
+  --name "/dynamiccloudarchitect/prod/deployment/access-key-id" \
   --region us-east-1 \
   --query 'Parameter.Value' \
   --output text
 
 aws ssm get-parameter \
-  --name "/{{app_name}}/prod/deployment/secret-access-key" \
+  --name "/dynamiccloudarchitect/prod/deployment/secret-access-key" \
   --region us-east-1 \
   --with-decryption \
   --query 'Parameter.Value' \
@@ -191,9 +191,9 @@ cd ../../..
 # Check which credentials you're using
 aws sts get-caller-identity
 
-# Should show: {{app_name}}-deployment-prod
+# Should show: dynamiccloudarchitect-deployment-prod
 # If not:
-export AWS_PROFILE={{app_name}}-deployment
+export AWS_PROFILE=dynamiccloudarchitect-deployment
 ```
 
 ### "Parameter not found" when getting credentials
@@ -230,9 +230,9 @@ cd terraform/environments/staging
 terraform apply
 
 # 2. Get staging credentials
-PROJECT_NAME={{app_name}} ENVIRONMENT=staging ./scripts/get-deployment-credentials.sh
+PROJECT_NAME=dynamiccloudarchitect ENVIRONMENT=staging ./scripts/get-deployment-credentials.sh
 
-# 3. Profile will be: {{app_name}}-deployment-staging
+# 3. Profile will be: dynamiccloudarchitect-deployment-staging
 ```
 
 ## Team Setup
