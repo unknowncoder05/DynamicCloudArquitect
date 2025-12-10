@@ -4,6 +4,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch } from '../../store/hooks';
+import { createResource, fetchProjectDetail } from '../../store/terraformSlice';
 import {
   CONTAINER_RULES,
   getResourceDisplayName,
@@ -37,11 +38,18 @@ const AddChildResourceModal: React.FC<AddChildResourceModalProps> = ({ projectId
   // Listen for add resource events from container nodes
   useEffect(() => {
     const handleAddResource = (event: CustomEvent) => {
-      const { parentId, parentType } = event.detail;
+      const { parentId, parentType, preselectedType } = event.detail;
       setParentId(parentId);
       setParentType(parentType);
       setIsOpen(true);
-      setSelectedResourceType('');
+
+      // If a resource type was preselected (from drag-and-drop), set it
+      if (preselectedType) {
+        setSelectedResourceType(preselectedType);
+      } else {
+        setSelectedResourceType('');
+      }
+
       setResourceName('');
       setConfiguration({});
     };
@@ -152,7 +160,6 @@ const AddChildResourceModal: React.FC<AddChildResourceModalProps> = ({ projectId
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // TODO: Dispatch Redux action to create resource
     const resourceData = {
       project: projectId,
       resource_type: selectedResourceType,
@@ -164,10 +171,18 @@ const AddChildResourceModal: React.FC<AddChildResourceModalProps> = ({ projectId
 
     console.log('Creating resource:', resourceData);
 
-    // Dispatch create action
-    // await dispatch(createResource(resourceData));
+    try {
+      // Dispatch create action
+      await dispatch(createResource(resourceData)).unwrap();
 
-    handleClose();
+      // Refresh project data to get updated hierarchy
+      await dispatch(fetchProjectDetail(projectId)).unwrap();
+
+      handleClose();
+    } catch (error) {
+      console.error('Failed to create resource:', error);
+      // TODO: Show error notification to user
+    }
   };
 
   if (!isOpen) return null;

@@ -232,10 +232,19 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ projectId }) => {
         ) : (
           <div className="space-y-2">
             {filteredResources.map((resource) => (
-              <button
+              <div
                 key={resource.type}
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('resourceType', resource.type);
+                  e.dataTransfer.setData('resourceName', resource.name);
+                  e.dataTransfer.setData('resourceIcon', resource.icon);
+                  e.dataTransfer.effectAllowed = 'copy';
+                }}
                 onClick={() => handleAddResource(resource)}
-                className="w-full text-left bg-white hover:bg-blue-50 border border-gray-200 rounded-lg p-3 transition-colors group"
+                className="w-full text-left bg-white hover:bg-blue-50 border border-gray-200 rounded-lg p-3 transition-colors group cursor-pointer"
+                role="button"
+                tabIndex={0}
               >
                 <div className="flex items-start space-x-3">
                   <div className="text-2xl">{resource.icon}</div>
@@ -251,7 +260,7 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ projectId }) => {
                     +
                   </div>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         )}
@@ -259,7 +268,7 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ projectId }) => {
 
       {/* Footer */}
       <div className="px-4 py-3 border-t border-gray-200 text-xs text-gray-500">
-        <p>Click to add resource to canvas</p>
+        <p>Click to add to canvas or drag to a compatible container</p>
       </div>
     </div>
   );

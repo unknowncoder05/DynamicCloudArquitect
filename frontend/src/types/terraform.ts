@@ -404,6 +404,7 @@ export interface CreateResourceRequest {
   resource_type: string;
   resource_name: string;
   terraform_address: string;
+  parent_resource?: string | null;  // UUID of parent resource for hierarchical resources
   configuration?: Record<string, any>;
   metadata?: Record<string, any>;
 }

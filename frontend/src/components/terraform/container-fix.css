@@ -1,0 +1,14 @@
+/* Fix for nested container z-index issues */
+.react-flow__node {
+  pointer-events: auto !important;
+}
+
+/* Ensure child nodes render on top of parent nodes */
+.react-flow__node[data-parent] {
+  z-index: var(--node-z-index, 10) !important;
+}
+
+/* Parent nodes should be behind children */
+.react-flow__node:has([data-parent]) {
+  z-index: 1 !important;
+}

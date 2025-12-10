@@ -35,6 +35,25 @@ const ProjectDetailPage: React.FC = () => {
     };
   }, [projectId, dispatch]);
 
+  // Listen for double-click event to show properties panel
+  useEffect(() => {
+    const handleShowProperties = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const { resourceId } = customEvent.detail;
+
+      // Show properties panel when a resource is double-clicked
+      if (resourceId) {
+        setShowProperties(true);
+      }
+    };
+
+    window.addEventListener('showResourceProperties', handleShowProperties);
+
+    return () => {
+      window.removeEventListener('showResourceProperties', handleShowProperties);
+    };
+  }, []);
+
   if (isLoading && !currentProject) {
     return (
       <div className="flex items-center justify-center h-screen">
