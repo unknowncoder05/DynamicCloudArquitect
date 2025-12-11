@@ -369,6 +369,7 @@ class TerraformResource(models.Model):
 
     # Define containment rules: parent_type -> [allowed_child_types]
     CONTAINER_RULES = {
+        'aws_account': ['aws_vpc', 'aws_s3_bucket', 'aws_iam_role', 'aws_iam_policy', 'aws_cloudwatch_log_group', 'aws_sns_topic', 'aws_sqs_queue'],
         'aws_vpc': ['aws_subnet', 'aws_internet_gateway', 'aws_nat_gateway', 'aws_vpn_gateway', 'aws_security_group'],
         'aws_subnet': ['aws_instance', 'aws_db_instance', 'aws_elasticache_cluster', 'aws_efs_mount_target', 'aws_lambda_function'],
         'aws_autoscaling_group': ['aws_instance'],
@@ -388,6 +389,7 @@ class TerraformResource(models.Model):
 
     # Container resources (can contain others)
     CONTAINER_TYPES = [
+        'aws_account',
         'aws_vpc',
         'aws_subnet',
         'aws_autoscaling_group',
@@ -418,6 +420,12 @@ class TerraformResource(models.Model):
     # Resource data
     configuration = models.JSONField(default=dict, blank=True)  # resource attributes
     metadata = models.JSONField(default=dict, blank=True)  # UI properties (position, color)
+
+    # Data source flag
+    is_data_source = models.BooleanField(
+        default=False,
+        help_text='True if this is a data source (queries existing infrastructure), False if managed resource'
+    )
 
     # NEW: Cloud-specific fields
     availability_zone = models.CharField(max_length=50, blank=True)  # e.g., 'us-east-1a'

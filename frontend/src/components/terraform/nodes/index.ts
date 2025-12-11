@@ -9,6 +9,7 @@ import LambdaNode from './LambdaNode';
 import ALBNode from './ALBNode';
 import SecurityGroupNode from './SecurityGroupNode';
 import ContainerNode from './ContainerNode';
+import AWSAccountNode from './AWSAccountNode';
 
 export { default as EC2Node } from './EC2Node';
 export { default as VPCNode } from './VPCNode';
@@ -18,11 +19,15 @@ export { default as LambdaNode } from './LambdaNode';
 export { default as ALBNode } from './ALBNode';
 export { default as SecurityGroupNode } from './SecurityGroupNode';
 export { default as ContainerNode } from './ContainerNode';
+export { default as AWSAccountNode } from './AWSAccountNode';
 export { BaseResourceNode } from './BaseResourceNode';
 
 export const nodeTypes = {
   // Container nodes (resources that can contain others)
   container: ContainerNode,
+
+  // AWS Account
+  aws_account: AWSAccountNode,
 
   // AWS Compute
   aws_instance: EC2Node,

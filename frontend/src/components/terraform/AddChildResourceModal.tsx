@@ -504,6 +504,66 @@ const AddChildResourceModal: React.FC<AddChildResourceModalProps> = ({ projectId
                   </>
                 )}
 
+                {selectedResourceType === 'aws_security_group' && (
+                  <>
+                    <div style={{ marginBottom: '16px' }}>
+                      <label style={{ display: 'block', marginBottom: '6px', fontWeight: 500 }}>
+                        Description
+                      </label>
+                      <input
+                        type="text"
+                        value={configuration.description || ''}
+                        onChange={(e) => setConfiguration({ ...configuration, description: e.target.value })}
+                        placeholder="Security group for web servers"
+                        style={{
+                          width: '100%',
+                          padding: '10px',
+                          border: '1px solid #ddd',
+                          borderRadius: '4px',
+                          fontSize: '14px',
+                        }}
+                      />
+                    </div>
+
+                    <div style={{
+                      backgroundColor: '#e3f2fd',
+                      borderLeft: '4px solid #1976d2',
+                      padding: '12px',
+                      marginBottom: '16px',
+                      borderRadius: '4px',
+                    }}>
+                      <div style={{ fontWeight: 600, marginBottom: '4px', color: '#1976d2' }}>
+                        ℹ️ Default Rules
+                      </div>
+                      <div style={{ fontSize: '13px', color: '#666' }}>
+                        A default egress rule (allow all outbound traffic) will be automatically added.
+                        You can customize security group rules after creation by selecting the resource
+                        and going to the <strong>Networking</strong> tab in the Properties panel.
+                      </div>
+                    </div>
+
+                    <div style={{
+                      backgroundColor: '#fff3cd',
+                      borderLeft: '4px solid #ff9800',
+                      padding: '12px',
+                      borderRadius: '4px',
+                    }}>
+                      <div style={{ fontWeight: 600, marginBottom: '4px', color: '#f57c00' }}>
+                        💡 Next Steps
+                      </div>
+                      <div style={{ fontSize: '13px', color: '#666' }}>
+                        After creating the security group:
+                        <ul style={{ margin: '8px 0 0 0', paddingLeft: '20px' }}>
+                          <li>Double-click the security group to open properties</li>
+                          <li>Go to the <strong>Networking</strong> tab</li>
+                          <li>Add ingress rules (SSH, HTTP, HTTPS, etc.)</li>
+                          <li>Modify or add egress rules if needed</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 {/* Submit buttons */}
                 <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
                   <button

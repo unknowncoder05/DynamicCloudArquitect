@@ -202,6 +202,7 @@ export interface TerraformResource {
   metadata: Record<string, any>;
   status: ResourceStatus;
   state_id?: string;
+  is_data_source: boolean;
   // Hierarchy fields
   parent_resource?: string;  // UUID of parent resource
   parent_resource_name?: string;
@@ -479,6 +480,7 @@ export interface APIError {
  * Key: parent resource type, Value: array of allowed child resource types
  */
 export const CONTAINER_RULES: Record<string, string[]> = {
+  'aws_account': ['aws_vpc', 'aws_s3_bucket', 'aws_iam_role', 'aws_iam_policy', 'aws_cloudwatch_log_group', 'aws_sns_topic', 'aws_sqs_queue'],
   'aws_vpc': ['aws_subnet', 'aws_internet_gateway', 'aws_nat_gateway', 'aws_vpn_gateway', 'aws_security_group'],
   'aws_subnet': ['aws_instance', 'aws_db_instance', 'aws_elasticache_cluster', 'aws_efs_mount_target', 'aws_lambda_function'],
   'aws_autoscaling_group': ['aws_instance'],
@@ -502,6 +504,7 @@ export const REQUIRES_PARENT: string[] = [
  * Resource types that can act as containers for other resources
  */
 export const CONTAINER_TYPES: string[] = [
+  'aws_account',
   'aws_vpc',
   'aws_subnet',
   'aws_autoscaling_group',
@@ -544,6 +547,7 @@ export function isContainerType(resourceType: string): boolean {
  */
 export function getResourceDisplayName(resourceType: string): string {
   const names: Record<string, string> = {
+    'aws_account': 'AWS Account',
     'aws_vpc': 'VPC',
     'aws_subnet': 'Subnet',
     'aws_instance': 'EC2 Instance',
@@ -567,6 +571,7 @@ export function getResourceDisplayName(resourceType: string): string {
  */
 export function getResourceIcon(resourceType: string): string {
   const icons: Record<string, string> = {
+    'aws_account': '☁️',
     'aws_vpc': '🌐',
     'aws_subnet': '🔷',
     'aws_instance': '🖥️',
@@ -581,4 +586,26 @@ export function getResourceIcon(resourceType: string): string {
     'aws_ecs_cluster': '🐳',
   };
   return icons[resourceType] || '📦';
+}
+
+/**
+ * Project Template
+ */
+export interface ProjectTemplate {
+  name: string;
+  display_name: string;
+  description: string;
+}
+
+/**
+ * Request body for creating a project
+ */
+export interface CreateProjectRequest {
+  name: string;
+  description?: string;
+  git_repository_url?: string;
+  git_branch?: string;
+  terraform_version?: string;
+  template?: string;
+  template_options?: Record<string, any>;
 }

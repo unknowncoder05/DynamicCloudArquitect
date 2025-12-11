@@ -15,6 +15,18 @@ interface ResourceTemplate {
 }
 
 const awsResourceTemplates: ResourceTemplate[] = [
+  // Container
+  {
+    type: 'aws_account',
+    name: 'AWS Account',
+    icon: '☁️',
+    category: 'Container',
+    defaultConfig: {
+      account_type: 'container',
+      description: 'AWS Account container',
+    },
+  },
+
   // Compute
   {
     type: 'aws_instance',

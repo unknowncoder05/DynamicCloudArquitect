@@ -17,6 +17,7 @@ import {
   UpdateProjectRequest,
   CreateResourceRequest,
   UpdateResourceRequest,
+  ProjectTemplate,
 } from '../types/terraform';
 
 interface TerraformState {
@@ -35,6 +36,10 @@ interface TerraformState {
   outputs: TerraformOutput[];
   branches: GitBranch[];
   executions: TerraformExecution[];
+
+  // Templates
+  availableTemplates: ProjectTemplate[];
+  isLoadingTemplates: boolean;
 
   // UI state
   isLoading: boolean;
@@ -63,6 +68,8 @@ const initialState: TerraformState = {
   outputs: [],
   branches: [],
   executions: [],
+  availableTemplates: [],
+  isLoadingTemplates: false,
   isLoading: false,
   isSaving: false,
   error: null,
@@ -116,6 +123,14 @@ export const deleteProject = createAsyncThunk(
   async (projectId: string) => {
     await terraformApi.projects.delete(projectId);
     return projectId;
+  }
+);
+
+export const fetchTemplates = createAsyncThunk(
+  'terraform/fetchTemplates',
+  async () => {
+    const response = await terraformApi.projects.templates();
+    return response.data;
   }
 );
 
@@ -336,6 +351,19 @@ const terraformSlice = createSlice({
         if (state.currentProject?.id === action.payload) {
           state.currentProject = null;
         }
+      });
+
+    // Fetch Templates
+    builder
+      .addCase(fetchTemplates.pending, (state) => {
+        state.isLoadingTemplates = true;
+      })
+      .addCase(fetchTemplates.fulfilled, (state, action) => {
+        state.isLoadingTemplates = false;
+        state.availableTemplates = action.payload;
+      })
+      .addCase(fetchTemplates.rejected, (state) => {
+        state.isLoadingTemplates = false;
       });
 
     // Fetch Resources

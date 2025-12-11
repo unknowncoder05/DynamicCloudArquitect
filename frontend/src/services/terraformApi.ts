@@ -29,6 +29,7 @@ import {
   GitBranchRequest,
   CloneRepositoryRequest,
   PaginatedResponse,
+  ProjectTemplate,
 } from '../types/terraform';
 
 const BASE_URL = '/terraform';
@@ -55,6 +56,9 @@ export const terraformProjectsApi = {
 
   cloneRepository: (id: string, data: CloneRepositoryRequest) =>
     api.post(`${BASE_URL}/projects/${id}/clone_repository/`, data),
+
+  templates: () =>
+    api.get<ProjectTemplate[]>(`${BASE_URL}/projects/templates/`),
 };
 
 // Git Branches

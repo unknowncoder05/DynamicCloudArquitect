@@ -283,6 +283,7 @@ class TerraformResourceSerializer(serializers.ModelSerializer):
             'id', 'project', 'module', 'provider', 'provider_name',
             'resource_type', 'resource_name', 'terraform_address',
             'configuration', 'metadata', 'status', 'state_id',
+            'is_data_source',
             # Hierarchy fields
             'parent_resource', 'parent_resource_name', 'parent_resource_type',
             'contained_resources_count', 'hierarchy_path',
@@ -340,6 +341,30 @@ class TerraformResourceSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(e.message_dict if hasattr(e, 'message_dict') else str(e))
 
         return attrs
+
+    def create(self, validated_data):
+        """Create resource and add default egress rule for security groups."""
+        # Check if this is a security group
+        is_security_group = validated_data.get('resource_type') == 'aws_security_group'
+
+        # Create the resource
+        instance = super().create(validated_data)
+
+        # Add default egress rule for security groups if none specified
+        if is_security_group:
+            configuration = instance.configuration or {}
+
+            # Only add default egress if no egress rules are specified
+            if 'egress' not in configuration or not configuration['egress']:
+                configuration['egress'] = [{
+                    'protocol': '-1',
+                    'cidr_blocks': ['0.0.0.0/0'],
+                    'description': 'Allow all outbound traffic (AWS default)'
+                }]
+                instance.configuration = configuration
+                instance.save()
+
+        return instance
 
 
 class ResourceDependencySerializer(serializers.ModelSerializer):
@@ -460,6 +485,10 @@ class TerraformProjectSerializer(serializers.ModelSerializer):
     resources_count = serializers.SerializerMethodField()
     branches_count = serializers.SerializerMethodField()
 
+    # Template fields (write-only, only for creation)
+    template = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    template_options = serializers.JSONField(write_only=True, required=False)
+
     class Meta:
         model = TerraformProject
         fields = [
@@ -467,6 +496,7 @@ class TerraformProjectSerializer(serializers.ModelSerializer):
             'git_repository_url', 'git_branch', 'git_commit_hash',
             'terraform_version', 'metadata',
             'resources_count', 'branches_count',
+            'template', 'template_options',
             'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'user', 'created_at', 'updated_at']

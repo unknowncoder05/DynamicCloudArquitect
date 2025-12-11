@@ -9,22 +9,25 @@ import {
   fetchProjects,
   createProject,
   deleteProject,
+  fetchTemplates,
 } from '../../store/terraformSlice';
 
 const ProjectsPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { projects, isLoading, error } = useAppSelector((state) => state.terraform);
+  const { projects, availableTemplates, isLoading, error } = useAppSelector((state) => state.terraform);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newProject, setNewProject] = useState({
     name: '',
     description: '',
     terraform_version: '1.6.0',
+    template: 'blank',
   });
 
   useEffect(() => {
     dispatch(fetchProjects());
+    dispatch(fetchTemplates());
   }, [dispatch]);
 
   const handleCreateProject = async (e: React.FormEvent) => {
@@ -32,7 +35,7 @@ const ProjectsPage: React.FC = () => {
     try {
       await dispatch(createProject(newProject)).unwrap();
       setShowCreateModal(false);
-      setNewProject({ name: '', description: '', terraform_version: '1.6.0' });
+      setNewProject({ name: '', description: '', terraform_version: '1.6.0', template: 'blank' });
       dispatch(fetchProjects());
     } catch (err) {
       console.error('Failed to create project:', err);
@@ -259,6 +262,33 @@ const ProjectsPage: React.FC = () => {
                     <option value="1.4.6">1.4.6</option>
                   </select>
                 </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Project Template
+                  </label>
+                  <select
+                    value={newProject.template}
+                    onChange={(e) =>
+                      setNewProject({
+                        ...newProject,
+                        template: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    {availableTemplates.map((template) => (
+                      <option key={template.name} value={template.name}>
+                        {template.display_name}
+                      </option>
+                    ))}
+                  </select>
+                  {newProject.template && availableTemplates.length > 0 && (
+                    <p className="mt-1 text-xs text-gray-500">
+                      {availableTemplates.find(t => t.name === newProject.template)?.description}
+                    </p>
+                  )}
+                </div>
               </div>
 
               <div className="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end space-x-3">
@@ -270,6 +300,7 @@ const ProjectsPage: React.FC = () => {
                       name: '',
                       description: '',
                       terraform_version: '1.6.0',
+                      template: 'blank',
                     });
                   }}
                   className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"

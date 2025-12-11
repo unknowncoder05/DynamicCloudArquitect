@@ -38,7 +38,7 @@ from .serializers import (
     TerraformExecutionSerializer,
     ResourceCloudStatusSerializer,
 )
-from .services import HCLParser, GitService
+from .services import HCLParser, GitService, TemplateRegistry
 
 
 class TerraformProjectViewSet(viewsets.ModelViewSet):
@@ -62,8 +62,28 @@ class TerraformProjectViewSet(viewsets.ModelViewSet):
         return TerraformProject.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        """Set user to current user on create."""
-        serializer.save(user=self.request.user)
+        """
+        Set user to current user on create.
+        If template is provided, apply it after project creation.
+        """
+        # Extract template info before saving
+        template_name = serializer.validated_data.pop('template', 'blank')
+        template_options = serializer.validated_data.pop('template_options', {})
+
+        # Create project
+        project = serializer.save(user=self.request.user)
+
+        # Apply template if specified
+        if template_name and template_name != 'blank':
+            try:
+                template = TemplateRegistry.get(template_name)
+                template.create(project, template_options)
+            except ValueError as e:
+                # Invalid template name - log but don't fail project creation
+                print(f"Warning: {e}")
+            except Exception as e:
+                # Template creation failed - log but don't fail project creation
+                print(f"Error applying template: {e}")
 
     @action(detail=True, methods=['post'])
     def parse_hcl(self, request, pk=None):
@@ -96,6 +116,12 @@ class TerraformProjectViewSet(viewsets.ModelViewSet):
             'status': 'success',
             'message': 'Repository cloning will be implemented with file storage'
         })
+
+    @action(detail=False, methods=['get'])
+    def templates(self, request):
+        """List available project templates."""
+        templates = TemplateRegistry.list_all()
+        return Response(templates)
 
 
 class GitBranchViewSet(viewsets.ModelViewSet):
